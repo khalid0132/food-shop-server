@@ -37,7 +37,7 @@ client.connect(err => {
    app.delete("/deleteProduct/:id", (req, res) => {
     console.log("id:", req.params.id)
 
-    foodCollection.deleteOne({ _id: ObjectId(req.params.id) })
+    foodCollection.deleteOne({ _id: ObjectId(req.params._id) })
         .then((result) => {
             console.log(result);
             res.send(result.deletedCount > 0)
@@ -47,22 +47,22 @@ client.connect(err => {
 
   //Get Single Product By ID
 
-app.get('/foods/:imageURL', (req, res) => {
+app.get('/foods/:id', (req, res) => {
   foodCollection
-    .find({ imageURL: ObjectId(req.params.imageURL) })
+    .find({ _id: ObjectId(req.params.id) })
     .toArray((err, documents) => {
       res.send(documents[0]);
     });
 });
 
-  //Create New Order 
+  // Create New Order 
    
-  // app.post('/addOrder', (req, res) => {
-  //   const newOrder = req.body;
-  //   orderCollection.insertOne(newOrder).then((result) => {
-  //     res.send(result.insertedCount > 0);
-  //   });
-  // });
+  app.post('/addOrder', (req, res) => {
+    const newOrder = req.body;
+    orderCollection.insertOne(newOrder).then((result) => {
+      res.send(result.insertedCount > 0);
+    });
+  });
 
 // Insert Product
   app.post('/admin', (req, res)=>{
