@@ -35,7 +35,7 @@ client.connect(err => {
 
    //Delete one product by ID
    app.delete("/deleteProduct/:id", (req, res) => {
-    console.log("id:", req.params.id)
+    console.log("_id:", req.params.id)
 
     foodCollection.deleteOne({ _id: ObjectId(req.params._id) })
         .then((result) => {
