@@ -22,8 +22,19 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(err => {
   console.log('connection err', err)
   const foodCollection = client.db("buyfood").collection("products");
+  const ordersCollection = client.db("buyfood").collection("order1");
   // console.log('database connected successfully');
 
+  // Post foods or products
+  app.post('/addFoods', (req, res) => {
+    const newEvent = req.body;
+    console.log('add', newEvent);
+    foodCollection.insertOne(newEvent)
+        .then(result => {
+            console.log('inserted count', result.insertedCount)
+            res.send(result.insertedCount > 0)
+        })
+})
   //Get all products
   app.get('/foods', (req, res)=>{
     foodCollection.find()
@@ -32,6 +43,25 @@ client.connect(err => {
       console.log('from database', items)
     })
   })
+
+  // Product get
+  app.get("/product/:_id", (req, res) => {
+    foodCollection
+        .find({ _id: ObjectId(req.params._id) })
+        .toArray((err, documents) => {
+            res.send(documents);
+        });
+});
+
+// Get orders from Mongo
+app.get("/order1", (req, res) => {
+  ordersCollection
+      .find({ email: req.query.email })
+      .toArray((err, items) => {
+          res.send(items);
+      });
+});
+
 
    //Delete one product by ID
    app.delete("/deleteProduct/:id", (req, res) => {
@@ -58,8 +88,8 @@ app.get('/foods/:id', (req, res) => {
   // Create New Order 
    
   app.post('/addOrder', (req, res) => {
-    const newOrder = req.body;
-    orderCollection.insertOne(newOrder).then((result) => {
+    const order = req.body;
+    ordersCollection.insertOne(order).then((result) => {
       res.send(result.insertedCount > 0);
     });
   });
